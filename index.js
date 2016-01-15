@@ -10,8 +10,11 @@ import CardTitle from 'material-ui/lib/card/card-title';
 import CardText from 'material-ui/lib/card/card-text';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import FontIcon from 'material-ui/lib/font-icon';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import Slider from 'react-slick';
+
+injectTapEventPlugin();
 
 const appBar = <AppBar title="Drivewzye Volunteerer" showMenuIconButton={false}/>
 
@@ -20,23 +23,23 @@ const motto = (<Card>
                         title="Team Motto"/>
                     <CardText>
                         <ul>
-                            <li>KISS</li>
-                            <li>TTTTDTR</li>
-                            <li>Don't break things</li>
-                            <li>Don't panic</li>
+                            <li>System Robustness</li>
+                            <li>Better Processes</li>
+                            <li>Knowledge Sharing</li>
                         </ul>
                     </CardText>
                </Card>);
 
 const thatOtherThing = (<Card>
                             <CardHeader
-                                title="That Other thing"/>
+                                title="Guiding Principles"/>
                             <CardText>
                                 <ul>
-                                    <li>KISS</li>
-                                    <li>TTTTDTR</li>
-                                    <li>Don't break things</li>
-                                    <li>Don't panic</li>
+                                    <li>Share, Collaborate</li>
+                                    <li>Personal and Professional Growth</li>
+                                    <li>Support each other</li>
+                                    <li>Everything is up for discussion; Everything can be changed</li>
+                                    <li>Play</li>
                                 </ul>
                             </CardText>
                        </Card>);
@@ -44,51 +47,84 @@ const thatOtherThing = (<Card>
 const candidates = [
         {
             name: "One",
-            picture: "1.png"
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-9.jpg"
         },
         {
             name: "Two",
-            picture: "2.png"
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-3.jpg"
         },
         {
             name: "Three",
-            picture: "3.png"
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-7.jpg"
+        },
+        {
+            name: "Four",
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-9.jpg"
+        },
+        {
+            name: "Five",
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-3.jpg"
+        },
+        {
+            name: "Six",
+            picture: "http://lorempixel.com/image_output/people-q-c-640-480-7.jpg"
         }
     ];
                
-function pickVolunteer(event) {
-    var numCandidates = candidates.length;
-    
-    var luckycandidateIndex = Math.floor(Math.random() * numCandidates);
-}
+
                
-const pickPersonButton = (<FloatingActionButton onTouchTap={pickVolunteer}>
-                            <FontIcon className="material-icons">shuffle</FontIcon>
-                         </FloatingActionButton>);
                
 
+var list = candidates.map(function(candidate, i){
+                            return (<div key={i}>
+                                        <img src={candidate.picture} style={{maxWidth:512}} />
+                                        <h2>{candidate.name}</h2>
+                                    </div>)
+                        })
+                          
                           
 var Carousel = React.createClass({
-                          render: function (){
+                        getInitialState: function() {
+                            var rand = Math.round(Math.random() * candidates.length);
+                            console.log(rand)
+                        return {
+                            luckyCandidateIndex: rand,
+                            move: true
+                        }
+                      },
+                        pickVolunteer: function (event) {
+                                var that = this;
+                                var luckyCandidateIndex = Math.round(Math.random() * candidates.length);
+                                console.log(luckyCandidateIndex)
+                                this.setState({
+                                        move: false        
+                                });
+                                setTimeout(function(){
+                                    that.setState({
+                                        luckyCandidateIndex:luckyCandidateIndex
+                                    })
+                                }, 810) 
+                        },
+                        render: function (){
                                     var settings = {
                                         infinite: true,
                                         centerMode: true,
                                         slidesToShow: 3,
                                         className:'carimg',
                                         centerPadding: '60px',
-                                        autoplay: true,
+                                        initialSlide: this.state.luckyCandidateIndex,
+                                        slickGoTo: this.state.luckyCandidateIndex,
+                                        autoplay: this.state.move,
                                         autoplaySpeed: 800
                                     };
-                                    return (
-                                        <Slider {...settings}>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-9.jpg" style={{maxWidth:512}} /></div>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-9.jpg" style={{maxWidth:512}} /></div>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-3.jpg" style={{maxWidth:512}} /></div>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-3.jpg" style={{maxWidth:512}} /></div>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-7.jpg" style={{maxWidth:512}} /></div>
-                                            <div><img src="http://lorempixel.com/image_output/people-q-c-640-480-7.jpg" style={{maxWidth:512}} /></div>
-                                        </Slider>
-                                    )
+                                    return (<div>
+                                            <Slider {...settings}>
+                                                {list}
+                                            </Slider>
+                                            <FloatingActionButton onTouchTap={this.pickVolunteer}>
+                                                <FontIcon className="material-icons">shuffle</FontIcon>
+                                            </FloatingActionButton>
+                                        </div>)
                                 }
                           });  
 
@@ -103,7 +139,6 @@ ReactDOM.render(<div>
                     {motto}
                     {thatOtherThing}
                     {carouselCard}
-                    {pickPersonButton}
                 </div>,
     document.getElementById('container')
 );
